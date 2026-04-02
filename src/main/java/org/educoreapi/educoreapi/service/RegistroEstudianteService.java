@@ -2,10 +2,7 @@ package org.educoreapi.educoreapi.service;
 
 import org.educoreapi.educoreapi.model.RegistroEstudiante;
 import org.educoreapi.educoreapi.repository.RegistroEstudianteRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +28,12 @@ public class RegistroEstudianteService {
 
         return regEstudianteRepo.findById(id);
 
+    }
+
+    //Buscar registros por curso (GET)
+
+    public List<RegistroEstudiante> listarRegistrosCurso(String curso){
+        return regEstudianteRepo.findAllByCursoIgnoreCase(curso);
     }
 
     //Agregar nuevo registro (Post)
