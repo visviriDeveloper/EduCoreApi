@@ -1,6 +1,8 @@
 package org.educoreapi.educoreapi.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.time.LocalDate;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 public class RegistroEstudiante {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombreEstudiante;
     private String curso;
@@ -17,8 +20,7 @@ public class RegistroEstudiante {
 
     public RegistroEstudiante(){}
 
-    public RegistroEstudiante(Integer id, String nombreEstudiante, String curso, boolean activo) {
-        this.id = id;
+    public RegistroEstudiante(String nombreEstudiante, String curso, boolean activo) {
         this.nombreEstudiante = nombreEstudiante;
         this.curso = curso;
         this.activo = activo;

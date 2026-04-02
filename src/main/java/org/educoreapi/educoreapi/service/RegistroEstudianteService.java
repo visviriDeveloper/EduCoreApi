@@ -2,7 +2,9 @@ package org.educoreapi.educoreapi.service;
 
 import org.educoreapi.educoreapi.model.RegistroEstudiante;
 import org.educoreapi.educoreapi.repository.RegistroEstudianteRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,11 +35,8 @@ public class RegistroEstudianteService {
 
     //Agregar nuevo registro (Post)
     public RegistroEstudiante agregarRegistroE(RegistroEstudiante estudianteARegistrar){
-        boolean estudianteExiste = regEstudianteRepo.existsById(estudianteARegistrar.getId());
-        if(!estudianteExiste){
+            estudianteARegistrar.setId(null);
             return regEstudianteRepo.save(estudianteARegistrar);
-        }
-        return null;
     }
 
     //Actualizar registro completo (Put)
@@ -51,10 +50,10 @@ public class RegistroEstudianteService {
     }
 
     //Eliminar registro por id (Delete)
-    public boolean eliminarRegistroEPorId (Integer id){
+    public boolean eliminarRegistroEPorId (Integer id) {
         boolean RegistroExiste = regEstudianteRepo.existsById(id);
-        if(!RegistroExiste){
-            return  false;
+        if (!RegistroExiste) {
+            return false;
         }
         regEstudianteRepo.deleteById(id);
         return true;
