@@ -36,17 +36,20 @@ public class RegistroEstudianteController {
 
     //Listar estudiante por id
     @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
+        try {
+            // Extraemos el objeto directamente. Si está vacío, lanza NoSuchElementException
+            RegistroEstudiante estudiante = regEstudianteService.buscarRegistroEPorId(id)
+                    .orElseThrow(() -> new NoSuchElementException("El estudiante no ha sido encontrado"));
+            return ResponseEntity.ok(estudiante);
 
-    public ResponseEntity<?> buscarPorId(@PathVariable Integer id){
-        try{
-            Optional<RegistroEstudiante> estudianteBuscado = regEstudianteService.buscarRegistroEPorId(id);
-            if(estudianteBuscado.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("El estudiante no ha sido encontrado");
-            }
-            return ResponseEntity.ok(estudianteBuscado.get());
+        } catch (NoSuchElementException e) {
+            // Capturamos la excepción específica que lanzamos en orElseThrow
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage()); // Retorna "El estudiante no ha sido encontrado"
         } catch (Exception e) {
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            // Capturamos cualquier otro error inesperado (ej. fallo de conexión a BD)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al buscar al estudiante por id");
         }
     }
@@ -93,16 +96,26 @@ public class RegistroEstudianteController {
 
     //PUT
     //Actualizacion completa del registro(Estudiante)
+    // PUT
+// Actualizacion completa del registro(Estudiante)
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarRegistroE (@PathVariable Integer id, @Valid @RequestBody RegistroEstudiante regActualizado){
-        try{
-            Optional<RegistroEstudiante> registroActualizado = regEstudianteService.actualizarRegistroE(id, regActualizado);
-            if(registroActualizado.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La id del registro solicitado no existe");
-            }
-            return ResponseEntity.ok(registroActualizado.get());
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<?> actualizarRegistroE(@PathVariable Integer id, @Valid @RequestBody RegistroEstudiante regActualizado) {
+        try {
+            // Extraemos el objeto y lanzamos la excepción si no existe
+            RegistroEstudiante registro = regEstudianteService.actualizarRegistroE(id, regActualizado)
+                    .orElseThrow(() -> new NoSuchElementException("La id del registro solicitado no existe"));
+
+            // Camino feliz: retornamos el 200 OK con el registro actualizado
+            return ResponseEntity.ok(registro);
+
+        } catch (NoSuchElementException e) {
+            // Capturamos el 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+            // Capturamos el error 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar el registro del estudiante");
         }
     }
